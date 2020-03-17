@@ -5,9 +5,6 @@
 
 
 import asyncio
-import re
-import time
-from functools import partial
 from common.logger import logger
 from common.tools import BaseCrawler, MsSQL, MySQL
 from common.color import get_color_dict
@@ -19,34 +16,32 @@ my_sql = MySQL()
 
 async def fetch(product_id, job_id):
     browser = await launch()
-    # browser = await launch({
-    #     'headless': True,
-    #     'args': [
-    #         '--disable-extensions',
-    #         '--hide-scrollbars',
-    #         '--disable-bundled-ppapi-flash',
-    #         '--mute-audio',
-    #         '--no-sandbox',
-    #         '--disable-setuid-sandbox',
-    #         '--disable-gpu',
-    #     ]})
+    browser = await launch({
+        'headless': True,
+        'args': [
+            '--disable-extensions',
+            '--hide-scrollbars',
+            '--disable-bundled-ppapi-flash',
+            '--mute-audio',
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-gpu',
+            '--blink-settings=imagesEnabled=false'
+            # '--disable-infobars'
+        ]})
 
     page = await browser.newPage()
-    # url = 'https://www.vova.com/' + product_id + '?currency=HKD'
-    url = 'https://www.joom.com/en/products/5c2dc9dc6ecda80101beac3c'
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36')
+    url = 'https://www.vova.com/' + product_id + '?currency=HKD'
+    # url = 'https://www.joom.com/en/products/5c2dc9dc6ecda80101beac3c'
     print(url)
-    # await page.setViewport(viewport={'width': 1280, 'height': 800})
-
-    # await page.setJavaScriptEnabled(enabled=True)
 
 
-    # await page.goto(url)
-    await page.goto(url,{'timeout':0})
-    # await page.waitForNavigation({'waitUntil': 'load'})
+    await page.goto(url,{'timeout':40000})
 
     print(await page.cookies())
-    html = await page.title()
-    # html = await page.content()
+    # html = await page.title()
+    html = await page.content()
     print(html)
     # intercept = partial(intercept_response, job_id=job_id)
     # page.on('response', intercept)
